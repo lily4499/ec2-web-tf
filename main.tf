@@ -14,6 +14,7 @@ resource "aws_instance" "webserver" {
     Environment = "Production"
     Owner       = "Terraform"
   }
+}
 
 # Executing commands on the server
 resource "null_resource" "deploy_website" {

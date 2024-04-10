@@ -26,10 +26,8 @@ resource "aws_instance" "webserver" {
       "sudo systemctl restart apache2"
     ]
 
-    // Copy the website files to the remote server
-    // This assumes you have a directory named 'website' locally
-    // and want to copy it to '/var/www/html' on the remote server
-    inline_shebang = [
+    // Use SCP command separately within inline block
+    inline = [
       "scp -r -i ~/.ssh/ec2-ssh-key /home/lili/website ubuntu@${self.public_ip}:/var/www/html"
     ]
   }

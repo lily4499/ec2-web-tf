@@ -20,7 +20,7 @@ resource "null_resource" "deploy_website" {
   connection {
     type        = "ssh"
     user        = "ubuntu"  # User for the AMI (e.g., ubuntu for Ubuntu AMI)
-    private_key = file("~/.ssh/id_rsa")  # Path to your private SSH key
+    private_key = file("~/.ssh/ec2-ssh-key")  # Path to your private SSH key
     host        = aws_instance.webserver.public_ip
   }
 
@@ -29,11 +29,12 @@ resource "null_resource" "deploy_website" {
       # Commands to install Apache2 and deploy website files
       ssh -i ~/.ssh/ec2-ssh-key ubuntu@${aws_instance.web_server.public_ip} sudo apt-get update
       ssh -i ~/.ssh/ec2-ssh-key ubuntu@${aws_instance.web_server.public_ip} sudo apt-get install -y apache2
-      scp -i ~/.ssh/ec2-ssh-key -r /path/to/your/website ubuntu@${aws_instance.web_server.public_ip}:/var/www/html
+      scp -i ~/.ssh/ec2-ssh-key -r /home/lili/website ubuntu@${aws_instance.web_server.public_ip}:/var/www/html
       ssh -i ~/.ssh/ec2-ssh-key ubuntu@${aws_instance.webserver.public_ip} sudo systemctl restart apache2
     EOT
   }
 }
+
 # Output block to display the public IP address and SSH command
 output "instance_public_ip" {
   value = aws_instance.webserver.public_ip

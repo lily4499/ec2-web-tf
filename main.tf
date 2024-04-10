@@ -28,9 +28,9 @@ resource "null_resource" "deploy_website" {
   provisioner "local-exec" {
     command = <<EOT
       # Commands to install Apache2 and deploy website files
-      ssh -i ~/.ssh/ec2-ssh-key ubuntu@${aws_instance.web_server.public_ip} sudo apt-get update
-      ssh -i ~/.ssh/ec2-ssh-key ubuntu@${aws_instance.web_server.public_ip} sudo apt-get install -y apache2
-      scp -i ~/.ssh/ec2-ssh-key -r /home/lili/website ubuntu@${aws_instance.web_server.public_ip}:/var/www/html
+      ssh -i ~/.ssh/ec2-ssh-key ubuntu@${aws_instance.webserver.public_ip} sudo apt-get update
+      ssh -i ~/.ssh/ec2-ssh-key ubuntu@${aws_instance.webserver.public_ip} sudo apt-get install -y apache2
+      scp -i ~/.ssh/ec2-ssh-key -r /home/lili/website ubuntu@${aws_instance.webserver.public_ip}:/var/www/html
       ssh -i ~/.ssh/ec2-ssh-key ubuntu@${aws_instance.webserver.public_ip} sudo systemctl restart apache2
     EOT
   }

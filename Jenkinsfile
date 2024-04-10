@@ -14,7 +14,7 @@ pipeline {
 
     stage('Checkout') {
       steps {
-        git branch: 'main', url: 'https://github.com/lily4499/ec2-tf.git'
+        git branch: 'main', url: 'https://github.com/lily4499/ec2-web-tf.git'
       }
     }
     

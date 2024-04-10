@@ -1,32 +1,7 @@
-# Declare provider (AWS in this case)
-provider "aws" {
-  region = "us-east-1"  # Specify your desired AWS region
-}
 
-# Declare variables (optional but recommended for flexibility)
-
-variable "instance_type" {
-  default = "t2.micro"
-}
-
-variable "ami" {
-  default = "ami-0c7217cdde317cfec"  # Ubuntu 22 AMI (change as needed)
-}
-
-variable "key_name" {
-  default = "ec2-ssh-key.pub"  # Name of your EC2 key pair
-}
-
-variable "subnet_id" {
-  default = "subnet-062bafb72ff1b9c71"  # Subnet ID where the instance will be launched
-}
-
-variable "security_groups" {
-  default = ["sg-091906568d27d3894"]  # List of security group IDs
-}
-
+# Provisioning an Ubuntu instance
 # Resource block to create an EC2 instance
-resource "aws_instance" "ec2_instance" {
+resource "aws_instance" "webserver" {
   ami           = var.ami
   instance_type = var.instance_type
   key_name      = var.key_name
@@ -35,35 +10,35 @@ resource "aws_instance" "ec2_instance" {
 
   # Optional: Customize EC2 instance settings
   tags = {
-    Name        = "MyEC2Instance"
+    Name        = "webserver"
     Environment = "Production"
     Owner       = "Terraform"
   }
 
-  # Optional: Define user data (e.g., script to run on instance launch)
-  user_data = <<-EOF
-    #!/bin/bash
-    echo "Hello from Terraform provisioned EC2 instance!"
-    # Add more custom user data here
-  EOF
-
-  # Optional: Configure EBS volume (example)
-  ebs_block_device {
-    device_name = "/dev/sdh"
-    volume_type = "gp2"
-    volume_size = 10
+# Executing commands on the server
+resource "null_resource" "deploy_website" {
+  connection {
+    type        = "ssh"
+    user        = "ubuntu"  # User for the AMI (e.g., ubuntu for Ubuntu AMI)
+    private_key = file("~/.ssh/id_rsa")  # Path to your private SSH key
+    host        = aws_instance.webserver.public_ip
   }
 
-  # Optional: Enable detailed monitoring (example)
-  monitoring = true
-  
+  provisioner "local-exec" {
+    command = <<EOT
+      # Commands to install Apache2 and deploy website files
+      ssh -i ~/.ssh/ec2-ssh-key ubuntu@${aws_instance.web_server.public_ip} sudo apt-get update
+      ssh -i ~/.ssh/ec2-ssh-key ubuntu@${aws_instance.web_server.public_ip} sudo apt-get install -y apache2
+      scp -i ~/.ssh/ec2-ssh-key -r /path/to/your/website ubuntu@${aws_instance.web_server.public_ip}:/var/www/html
+      ssh -i ~/.ssh/ec2-ssh-key ubuntu@${aws_instance.webserver.public_ip} sudo systemctl restart apache2
+    EOT
+  }
 }
-
 # Output block to display the public IP address and SSH command
 output "instance_public_ip" {
-  value = aws_instance.ec2_instance.public_ip
+  value = aws_instance.webserver.public_ip
 }
 
 output "ssh_command" {
-  value = "ssh -i /home/lili/.ssh/ec2-ssh-key ubuntu@${aws_instance.ec2_instance.public_ip}"
+  value = "ssh -i /home/lili/.ssh/ec2-ssh-key ubuntu@${aws_instance.webserver.public_ip}"
 }

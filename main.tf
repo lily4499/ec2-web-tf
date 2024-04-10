@@ -23,13 +23,9 @@ resource "aws_instance" "webserver" {
     inline = [
       "sudo apt-get update",
       "sudo apt-get install -y apache2",
+      "scp -r -i ~/.ssh/ec2-ssh-key /home/lili/website ubuntu@${self.public_ip}:/var/www/html" 
       "sudo systemctl restart apache2"
-    ]
-
-    // Use SCP command separately within inline block
-    inline = [
-      "scp -r -i ~/.ssh/ec2-ssh-key /home/lili/website ubuntu@${self.public_ip}:/var/www/html"
-    ]
+    ]   
   }
 }
 

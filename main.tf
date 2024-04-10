@@ -16,7 +16,7 @@ resource "aws_instance" "webserver" {
   connection {
     type        = "ssh"
     user        = "ubuntu"
-    private_key = file("~/.ssh/id_rsa")
+    private_key = file("~/.ssh/ec2-ssh-key")
   }
 
   provisioner "remote-exec" {
@@ -30,7 +30,7 @@ resource "aws_instance" "webserver" {
     // This assumes you have a directory named 'website' locally
     // and want to copy it to '/var/www/html' on the remote server
     inline_shebang = [
-      "scp -r -i ~/.ssh/id_rsa /path/to/your/website ubuntu@${self.public_ip}:/var/www/html"
+      "scp -r -i ~/.ssh/ec2-ssh-key /home/lili/website ubuntu@${self.public_ip}:/var/www/html"
     ]
   }
 }

@@ -9,7 +9,7 @@ variable "ami" {
 }
 
 variable "key_name" {
-  default = "id_rsa.pub"  # Name of your EC2 key pair
+  default = "ec2-key"  # Name of your EC2 key pair
 }
 
 variable "subnet_id" {

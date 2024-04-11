@@ -16,14 +16,14 @@ resource "aws_instance" "webserver" {
   connection {
     type        = "ssh"
     user        = "ubuntu"
-    private_key = file("/home/lili/.ssh/id_rsa")
+    private_key = file("/home/lili/ec2-key.pem")
   }
 
   provisioner "remote-exec" {
     inline = [
       "sudo apt-get update",
       "sudo apt-get install -y apache2",
-      "scp -r -i /home/lili/.ssh/id_rsa /home/lili/website ubuntu@${self.public_ip}:/var/www/html",
+      "scp -r -i /home/lili/ec2-key.pem /home/lili/website ubuntu@${self.public_ip}:/var/www/html",
       "sudo systemctl restart apache2"
     ]   
   }
@@ -35,5 +35,5 @@ output "instance_public_ip" {
 }
 
 output "ssh_command" {
-  value = "ssh -i /home/lili/.ssh/id_rsa ubuntu@${aws_instance.webserver.public_ip}"
+  value = "ssh -i /home/lili/ec2-key.pem ubuntu@${aws_instance.webserver.public_ip}"
 }
